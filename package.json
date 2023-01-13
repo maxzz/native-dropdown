@@ -1,6 +1,8 @@
 {
     "name": "native-dropdown",
+    "description": "Vanilla JS dropdown menu test",
     "private": true,
+    "license": "MIT",
     "version": "0.0.0",
     "type": "module",
     "scripts": {
