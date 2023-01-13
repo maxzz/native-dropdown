@@ -1,4 +1,5 @@
 import { ListIcons, listIcons, listItems } from './items';
+import './doc.css';
 import './style.css';
 
 type UI = {
@@ -82,7 +83,7 @@ function createDropdown(parent: HTMLElement) {
     renderListItems();
     dropDown(ui, cssRoot);
 
-    parent.parentElement!.replaceChild(root, parent);
+    return root;
 
     function renderListItems() {
         ui.dropdownList.innerHTML += listItems.map((item, index) => listItemTemplate(item, 100 * index)).join("");
@@ -127,8 +128,6 @@ function createDropdown(parent: HTMLElement) {
 }
 
 window.addEventListener("load", () => {
-
-    let parent = document.querySelector('.dropdown-place') as HTMLElement;
-    createDropdown(parent);
-
+    let nodes = [...document.querySelectorAll<HTMLElement>('.dropdown-place')];
+    nodes.forEach((parent) => parent.parentElement!.replaceChild(createDropdown(parent), parent));
 });
