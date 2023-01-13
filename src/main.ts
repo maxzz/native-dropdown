@@ -1,10 +1,11 @@
 import './style.css';
+
 const root = document.documentElement;
-const dropdownTitleIcon = document.querySelector(".dropdown-title-icon");
-const dropdownTitle = document.querySelector(".dropdown-title");
-const dropdownList = document.querySelector(".dropdown-list");
-const mainButton = document.querySelector(".main-button");
-const floatingIcon = document.querySelector(".floating-icon");
+const dropdownTitleIcon = document.querySelector(".dropdown-title-icon")!;
+const dropdownTitle = document.querySelector(".dropdown-title")!;
+const dropdownList = document.querySelector(".dropdown-list") as HTMLElement;
+const mainButton = document.querySelector(".main-button")!;
+const floatingIcon = document.querySelector(".floating-icon")!;
 
 const icons = {
     linkedin:
@@ -21,7 +22,7 @@ const icons = {
 
 const listItems = ["Linkedin", "Instagram", "Facebook", "Twitter", "Youtube"];
 
-const iconTemplate = (path) => {
+const iconTemplate = (path: string) => {
     return `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
       <path d="${path}" />
@@ -29,7 +30,7 @@ const iconTemplate = (path) => {
   `;
 };
 
-const listItemTemplate = (text, translateValue) => {
+const listItemTemplate = (text: string, translateValue: number) => {
     return `
     <li class="dropdown-list-item">
       <button class="dropdown-button list-button" data-translate-value="${translateValue}%">
@@ -51,10 +52,10 @@ window.addEventListener("load", () => {
     renderListItems();
 });
 
-const setDropdownProps = (deg, ht, opacity) => {
-    root.style.setProperty("--rotate-arrow", deg !== 0 ? deg + "deg" : 0);
-    root.style.setProperty("--dropdown-height", ht !== 0 ? ht + "rem" : 0);
-    root.style.setProperty("--list-opacity", opacity);
+const setDropdownProps = (deg: number, ht: number, opacity: number) => {
+    root.style.setProperty("--rotate-arrow", `${deg !== 0 ? deg + "deg" : 0}`);
+    root.style.setProperty("--dropdown-height", `${ht !== 0 ? ht + "rem" : 0}`);
+    root.style.setProperty("--list-opacity", `${opacity}`);
 };
 
 mainButton.addEventListener("click", () => {
@@ -69,12 +70,12 @@ mainButton.addEventListener("click", () => {
 });
 
 dropdownList.addEventListener("mouseover", (e) => {
-    const translateValue = e.target.dataset.translateValue;
+    const translateValue = (e.target as HTMLElement).dataset.translateValue || '';
     root.style.setProperty("--translate-value", translateValue);
 });
 
 dropdownList.addEventListener("click", (e) => {
-    const clickedItemText = e.target.innerText.toLowerCase().trim();
+    const clickedItemText = (e.target as HTMLElement).innerText.toLowerCase().trim() as keyof typeof icons;
     const clickedItemIcon = icons[clickedItemText];
 
     dropdownTitleIcon.innerHTML = iconTemplate(clickedItemIcon);
@@ -82,14 +83,15 @@ dropdownList.addEventListener("click", (e) => {
     setDropdownProps(0, 0, 0);
 });
 
-dropdownList.addEventListener("mousemove", (e) => {
-    const iconSize = root.style.getPropertyValue("--floating-icon-size") || 0;
+dropdownList.addEventListener("mousemove", (e: MouseEvent) => {
+    const iconSize = +root.style.getPropertyValue("--floating-icon-size") || 0;
     const x = e.clientX - dropdownList.getBoundingClientRect().x;
     const y = e.clientY - dropdownList.getBoundingClientRect().y;
-    const targetText = e.target.innerText.toLowerCase().trim();
+    const targetText = (e.target as HTMLElement).innerText.toLowerCase().trim() as keyof typeof icons;
     const hoverItemText = icons[targetText];
 
     floatingIcon.innerHTML = iconTemplate(hoverItemText);
     root.style.setProperty("--floating-icon-left", x - iconSize / 2 + "px");
     root.style.setProperty("--floating-icon-top", y - iconSize / 2 + "px");
+
 });
