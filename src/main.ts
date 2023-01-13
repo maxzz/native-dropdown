@@ -7,7 +7,7 @@ type UI = {
     dropdownList: HTMLElement;
     mainButton: HTMLElement;
     floatingIcon: HTMLElement;
-}
+};
 
 function dropDown(ui: UI, cssRoot: HTMLElement) {
 
@@ -18,56 +18,56 @@ function dropDown(ui: UI, cssRoot: HTMLElement) {
         </svg>
       `;
     }
-    
+
     function setDropdownCssProps(deg: number, height: number, opacity: number) {
         const style = cssRoot.style;
         style.setProperty("--rotate-arrow", `${deg !== 0 ? deg + "deg" : 0}`);
         style.setProperty("--dropdown-height", `${height !== 0 ? height + "rem" : 0}`);
         style.setProperty("--list-opacity", `${opacity}`);
     }
-    
+
     ui.mainButton.addEventListener("click", () => {
         const listWrapperSizes = 3.5; // margins, paddings & borders
         const dropdownOpenHeight = 4.6 * listItems.length + listWrapperSizes;
         const currDropdownHeight = cssRoot.style.getPropertyValue("--dropdown-height") || "0";
-    
+
         currDropdownHeight === "0"
             ? setDropdownCssProps(180, dropdownOpenHeight, 1)
             : setDropdownCssProps(0, 0, 0);
     });
-    
+
     ui.dropdownList.addEventListener("mouseover", (e) => {
         const translateValue = (e.target as HTMLElement).dataset.translateValue || '';
         cssRoot.style.setProperty("--translate-value", translateValue);
     });
-    
+
     ui.dropdownList.addEventListener("click", (e) => {
         const clickedItemText = (e.target as HTMLElement).innerText.toLowerCase().trim() as ListIcons;
         const clickedItemIcon = listIcons[clickedItemText];
-    
+
         ui.dropdownTitleIcon.innerHTML = iconTemplate(clickedItemIcon);
         ui.dropdownTitle.innerHTML = clickedItemText;
         setDropdownCssProps(0, 0, 0);
     });
-    
+
     ui.dropdownList.addEventListener("mousemove", (e: MouseEvent) => {
         const iconSize = +cssRoot.style.getPropertyValue("--floating-icon-size") || 0;
         const x = e.clientX - ui.dropdownList.getBoundingClientRect().x;
         const y = e.clientY - ui.dropdownList.getBoundingClientRect().y;
         const targetText = (e.target as HTMLElement).innerText.toLowerCase().trim() as ListIcons;
         const hoverItemText = listIcons[targetText];
-    
+
         ui.floatingIcon.innerHTML = iconTemplate(hoverItemText);
         cssRoot.style.setProperty("--floating-icon-left", x - iconSize / 2 + "px");
         cssRoot.style.setProperty("--floating-icon-top", y - iconSize / 2 + "px");
     });
 }
 
-window.addEventListener("load", () => {
+function createDropdown(parent: HTMLElement) {
+    const div = document.createElement('div');
+    div.innerHTML = body();
 
-    let root = document.querySelector('.dropdown-place') as HTMLElement;
-    root.outerHTML = body();
-    root = document.querySelector('.dropdown-container')!;
+    const root = div.querySelector<HTMLElement>('.dropdown-container')!;
 
     const ui: UI = {
         dropdownTitleIcon: root.querySelector(".dropdown-title-icon")!,
@@ -76,11 +76,13 @@ window.addEventListener("load", () => {
         mainButton: root.querySelector(".main-button")!,
         floatingIcon: root.querySelector(".floating-icon")!,
     };
-    
+
     const cssRoot = root; //document.documentElement;
-    
+
     renderListItems();
     dropDown(ui, cssRoot);
+
+    parent.parentElement!.replaceChild(root, parent);
 
     function renderListItems() {
         ui.dropdownList.innerHTML += listItems.map((item, index) => listItemTemplate(item, 100 * index)).join("");
@@ -122,4 +124,11 @@ window.addEventListener("load", () => {
       </div>
       `;
     }
+}
+
+window.addEventListener("load", () => {
+
+    let parent = document.querySelector('.dropdown-place') as HTMLElement;
+    createDropdown(parent);
+
 });
