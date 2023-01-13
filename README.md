@@ -6,4 +6,4 @@ Vanilla JS dropdown menu test.
 
 ### Links, creds, refs
 
-[Dropdown menu](https://codepen.io/flavio_amaral/pen/xxqQLoa)
+[Original dropdown menu by Flávio Amaral](https://codepen.io/flavio_amaral/pen/xxqQLoa)
