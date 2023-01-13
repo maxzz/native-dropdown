@@ -10,6 +10,7 @@ type UI = {
 }
 
 function dropDown(ui: UI, cssRoot: HTMLElement) {
+
     function iconTemplate(path: string) {
         return `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
@@ -18,7 +19,7 @@ function dropDown(ui: UI, cssRoot: HTMLElement) {
       `;
     }
     
-    function setDropdownProps(deg: number, height: number, opacity: number) {
+    function setDropdownCssProps(deg: number, height: number, opacity: number) {
         const style = cssRoot.style;
         style.setProperty("--rotate-arrow", `${deg !== 0 ? deg + "deg" : 0}`);
         style.setProperty("--dropdown-height", `${height !== 0 ? height + "rem" : 0}`);
@@ -31,8 +32,8 @@ function dropDown(ui: UI, cssRoot: HTMLElement) {
         const currDropdownHeight = cssRoot.style.getPropertyValue("--dropdown-height") || "0";
     
         currDropdownHeight === "0"
-            ? setDropdownProps(180, dropdownOpenHeight, 1)
-            : setDropdownProps(0, 0, 0);
+            ? setDropdownCssProps(180, dropdownOpenHeight, 1)
+            : setDropdownCssProps(0, 0, 0);
     });
     
     ui.dropdownList.addEventListener("mouseover", (e) => {
@@ -46,7 +47,7 @@ function dropDown(ui: UI, cssRoot: HTMLElement) {
     
         ui.dropdownTitleIcon.innerHTML = iconTemplate(clickedItemIcon);
         ui.dropdownTitle.innerHTML = clickedItemText;
-        setDropdownProps(0, 0, 0);
+        setDropdownCssProps(0, 0, 0);
     });
     
     ui.dropdownList.addEventListener("mousemove", (e: MouseEvent) => {
@@ -63,15 +64,18 @@ function dropDown(ui: UI, cssRoot: HTMLElement) {
 }
 
 window.addEventListener("load", () => {
+
+    const root = document.querySelector('.dropdown-container') as HTMLElement;
+
     const ui: UI = {
-        dropdownTitleIcon: document.querySelector(".dropdown-title-icon")!,
-        dropdownTitle: document.querySelector(".dropdown-title")!,
-        dropdownList: document.querySelector(".dropdown-list") as HTMLElement,
-        mainButton: document.querySelector(".main-button")!,
-        floatingIcon: document.querySelector(".floating-icon")!,
+        dropdownTitleIcon: root.querySelector(".dropdown-title-icon")!,
+        dropdownTitle: root.querySelector(".dropdown-title")!,
+        dropdownList: root.querySelector(".dropdown-list")!,
+        mainButton: root.querySelector(".main-button")!,
+        floatingIcon: root.querySelector(".floating-icon")!,
     };
     
-    const cssRoot = document.documentElement;
+    const cssRoot = root; //document.documentElement;
     
     renderListItems();
     dropDown(ui, cssRoot);
@@ -80,11 +84,11 @@ window.addEventListener("load", () => {
         ui.dropdownList.innerHTML += listItems.map((item, index) => listItemTemplate(item, 100 * index)).join("");
     }
 
-    function listItemTemplate(text: string, translateValue: number) {
+    function listItemTemplate(label: string, translateValue: number) {
         return `
         <li class="dropdown-list-item">
           <button class="dropdown-button list-button" data-translate-value="${translateValue}%">
-            <span class="text-truncate">${text}</span>
+            <span class="text-truncate">${label}</span>
           </button>
         </li>
       `;
